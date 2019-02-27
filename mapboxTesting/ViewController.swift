@@ -23,6 +23,14 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         
         view.addSubview(mapView)
         
+        let button = UIButton(frame: CGRect(x: 160, y: 760, width: 130, height: 50))
+            button.backgroundColor = #colorLiteral(red: 0.968627451, green: 0.4666666667, blue: 0.3294117647, alpha: 1)
+            button.setTitle("Start Tracking", for: .normal)
+            button.addTarget(self, action: #selector(action(sender:)), for: .touchUpInside)
+        
+        view.addSubview(button)
+        
+        
         // Set the map view's delegate
         mapView.delegate = self
         
@@ -34,6 +42,15 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
         
         mapView.addGestureRecognizer(longPress)
+        
+    }
+    
+    @objc fileprivate func action(sender: Button) {
+        print("button tapped")
+    }
+    
+    func mapView(_ mapView: MGLMapView, didUpdate userLocation: MGLUserLocation?) {
+        print("User location updated!" )
     }
     
     @objc func didLongPress(_ sender: UILongPressGestureRecognizer) {
@@ -113,4 +130,3 @@ class ViewController: UIViewController, MGLMapViewDelegate {
     }
 
 }
-
