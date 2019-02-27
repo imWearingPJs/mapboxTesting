@@ -16,6 +16,9 @@ class ViewController: UIViewController, MGLMapViewDelegate {
     var mapView: NavigationMapView!
     var directionsRoute: Route?
     
+    var userCoordinates: [CLLocationCoordinate2D] = []
+    var recordRoute = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,13 +33,11 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         
         view.addSubview(button)
         
-        
         // Set the map view's delegate
         mapView.delegate = self
         
         // Allow the map to display the user's location
         mapView.showsUserLocation = true
-        mapView.setUserTrackingMode(.follow, animated: true)
         
         // Add a gesture recognizer to the map view
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
@@ -47,10 +48,30 @@ class ViewController: UIViewController, MGLMapViewDelegate {
     
     @objc fileprivate func action(sender: Button) {
         print("button tapped")
+        if sender.currentTitle == "Start Tracking" {
+            sender.setTitle("Stop Tracking", for: .normal)
+            mapView.setUserTrackingMode(.follow, animated: true)
+            recordRoute = true
+        } else {
+            sender.setTitle("Start Tracking", for: .normal)
+            mapView.setUserTrackingMode(.none, animated: true)
+            recordRoute = false
+        }
     }
     
     func mapView(_ mapView: MGLMapView, didUpdate userLocation: MGLUserLocation?) {
         print("User location updated!" )
+        let coordinates = mapView.userLocation!.coordinate
+
+        if recordRoute == true {
+            userCoordinates.append(coordinates)
+        }
+        print(userCoordinates)
+        if userCoordinates.count > 0 {
+            let routeLine = MGLPolyline(coordinates: userCoordinates, count: UInt(userCoordinates.count))
+            mapView.add(routeLine)
+        }
+
     }
     
     @objc func didLongPress(_ sender: UILongPressGestureRecognizer) {
@@ -72,7 +93,6 @@ class ViewController: UIViewController, MGLMapViewDelegate {
                 print("Error calculating route")
             }
         }
-        
     }
     
     // Calculate route to be used for navigation
@@ -110,7 +130,7 @@ class ViewController: UIViewController, MGLMapViewDelegate {
             // Customize the route line color and width
             let lineStyle = MGLLineStyleLayer(identifier: "route-style", source: source)
             lineStyle.lineColor = NSExpression(forConstantValue: #colorLiteral(red: 0.1897518039, green: 0.3010634184, blue: 0.7994888425, alpha: 1))
-            lineStyle.lineWidth = NSExpression(forConstantValue: 3)
+            lineStyle.lineWidth = NSExpression(forConstantValue: 4)
             
             // Add the source and style layer of the route line to the map
             mapView.style?.addSource(source)
