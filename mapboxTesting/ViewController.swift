@@ -38,6 +38,7 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         
         // Allow the map to display the user's location
         mapView.showsUserLocation = true
+        mapView.setUserTrackingMode(.follow, animated: true)
         
         // Add a gesture recognizer to the map view
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
@@ -50,11 +51,11 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         print("button tapped")
         if sender.currentTitle == "Start Tracking" {
             sender.setTitle("Stop Tracking", for: .normal)
-            mapView.setUserTrackingMode(.follow, animated: true)
+//            mapView.setUserTrackingMode(.follow, animated: true)
             recordRoute = true
         } else {
             sender.setTitle("Start Tracking", for: .normal)
-            mapView.setUserTrackingMode(.none, animated: true)
+//            mapView.setUserTrackingMode(.none, animated: true)
             recordRoute = false
         }
     }
